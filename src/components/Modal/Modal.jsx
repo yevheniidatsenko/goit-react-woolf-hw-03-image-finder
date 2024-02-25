@@ -1,24 +1,42 @@
 import PropTypes from 'prop-types';
 import styles from './Modal.module.css';
+import { Component } from 'react';
 
-export const Modal = ({ isOpen, closeModal, imageUrl }) => {
-  const handleOverlayClick = e => {
+export class Modal extends Component {
+  handleOverlayClick = e => {
     if (e.target === e.currentTarget) {
-      closeModal();
+      this.props.closeModal();
     }
   };
 
-  return (
-    <div
-      className={isOpen ? styles.Overlay : styles.Hidden}
-      onClick={handleOverlayClick}
-    >
-      <div className={styles.Modal}>
-        <img src={imageUrl} alt="Large" />
+  handleKeyUp = e => {
+    if (e.key === 'Escape') {
+      this.props.closeModal();
+    }
+  };
+
+  componentDidMount() {
+    window.addEventListener('keyup', this.handleKeyUp);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyUp);
+  }
+
+  render() {
+    const { isOpen, imageUrl } = this.props;
+    return (
+      <div
+        className={isOpen ? styles.Overlay : styles.Hidden}
+        onClick={this.handleOverlayClick}
+      >
+        <div className={styles.Modal}>
+          <img src={imageUrl} alt="Large" />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 Modal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
